@@ -7,7 +7,7 @@ if [ "$1" = "-h" ]; then
 fi
 
 function analyse_table {
-    # Usage: analyse_table $pat $2 $patfile $3 
+    # Usage: analyse_table $pat $2 $patfile $3 $best
     patnum=`echo $1 | awk -F"-" '{print $2}'`
     thick=`echo $3 | awk -F"_" '{print $3}'`
     add=`echo $3 | awk -F"_" '{print $5}'`
@@ -44,8 +44,14 @@ function analyse_table {
 	outcsv=$4/$outcsv
     fi    
 
+    # is best phase?
+    isbest=0
+    if [ $5 = $phase ]; then
+	isbest=1
+    fi
+
     # write results to file
-    echo $patnum,$thick,$add,$phase,$rec,$d1,$min1,$max1,$d2,$min2,$max2,$d3,$min3,$max3,$d4,$min4,$max4 | tee -a $outcsv
+    echo $patnum,$thick,$add,$phase,$isbest,$rec,$d1,$min1,$max1,$d2,$min2,$max2,$d3,$min3,$max3,$d4,$min4,$max4 | tee -a $outcsv
 }
 
 # output path?
@@ -61,7 +67,7 @@ if [ "x$3" != "x" ]; then
 fi    
 
 # create new ouput table
-echo "pat,thick,add,phase,rec,d1,min1,max1,d2,min2,max2,d3,min3,max3,d4,min4,max4" | tee $outcsv
+echo "pat,thick,add,phase,best,rec,d1,min1,max1,d2,min2,max2,d3,min3,max3,d4,min4,max4" | tee $outcsv
 
 # get list of files with 0, 0, AIDR
 FILES=`ls *Thickness_8_Addition_2_Phase_*_rec_AIDR.csv | paste -s`
@@ -89,7 +95,7 @@ do
 	for patfile in $(echo $PATFILES)
 	do
 
-	    analyse_table $pat $2 $patfile $3 &
+	    analyse_table $pat $2 $patfile $3 $best &
 
 	    while (( $(jobs | wc -l) >= 40 )); do
 		sleep 0.1
