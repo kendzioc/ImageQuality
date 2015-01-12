@@ -28,12 +28,19 @@ print(bps)
 if (opt$inputfiles!="keine") {
     files <-(unlist(strsplit(opt$inputfiles,":")))
 } else {
-    files <- c("~/Desktop/sarah/iq/test/tables/Pat-18_Thickness_0_Addition_0_Phase_8_rec_FBP.csv",
-               "~/Desktop/sarah/iq/test/tables/Pat-18_Thickness_0_Addition_2_Phase_9_rec_FBP.csv",
-               "~/Desktop/sarah/iq/test/tables/Pat-18_Thickness_5_Addition_0_Phase_8_rec_FBP.csv",
-               "~/Desktop/sarah/iq/test/tables/Pat-18_Thickness_5_Addition_2_Phase_8_rec_FBP.csv",
-               "~/Desktop/sarah/iq/test/tables/Pat-18_Thickness_8_Addition_0_Phase_8_rec_FBP.csv",
-               "~/Desktop/sarah/iq/test/tables/Pat-18_Thickness_8_Addition_2_Phase_8_rec_FBP.csv")
+    files <- c("~/Kardio/ImageQuality/analysis/contour_sharpness/tables/Pat-02_Thickness_5_Addition_0_Phase_9_rec_AIDR.csv",
+               "~/Kardio/ImageQuality/analysis/contour_sharpness/tables/Pat-06_Thickness_5_Addition_0_Phase_13_rec_AIDR.csv",
+               "~/Kardio/ImageQuality/analysis/contour_sharpness/tables/Pat-09_Thickness_5_Addition_0_Phase_10_rec_AIDR.csv",
+               "~/Kardio/ImageQuality/analysis/contour_sharpness/tables/Pat-19_Thickness_5_Addition_0_Phase_10_rec_AIDR.csv",
+               "~/Kardio/ImageQuality/analysis/contour_sharpness/tables/Pat-30_Thickness_5_Addition_0_Phase_10_rec_AIDR.csv")
+#         
+#         
+#         "~/Desktop/sarah/iq/test/tables/Pat-18_Thickness_0_Addition_0_Phase_8_rec_FBP.csv",
+#                "~/Desktop/sarah/iq/test/tables/Pat-18_Thickness_0_Addition_2_Phase_9_rec_FBP.csv",
+#                "~/Desktop/sarah/iq/test/tables/Pat-18_Thickness_5_Addition_0_Phase_8_rec_FBP.csv",
+#                "~/Desktop/sarah/iq/test/tables/Pat-18_Thickness_5_Addition_2_Phase_8_rec_FBP.csv",
+#                "~/Desktop/sarah/iq/test/tables/Pat-18_Thickness_8_Addition_0_Phase_8_rec_FBP.csv",
+#                "~/Desktop/sarah/iq/test/tables/Pat-18_Thickness_8_Addition_2_Phase_8_rec_FBP.csv")
 #                Steier6.csv",
 #                "~/Desktop/sarah/iq/Luedecke7.csv",
 #                "~/Desktop/sarah/iq/Eck10.csv",
@@ -59,7 +66,7 @@ myocutup = 130
 myocutdown = 0
 
 bpson  = 1
-myoon = 0
+myoon = 1
 exon = 1
 updown = 1
 
@@ -101,15 +108,17 @@ for(f in files){
 
     if (search_bps) {
         # find outer myocardial wall
+        # start from right end; find fist zero;
         for (i in length(xvec):1) {
             count = 0
             y = yvec[i]
-            if (y > 0) {
+            if (y > -200) {
                 wallri = i
-                # more points ?
+                # more points > 0 after first zero? check for 20 next points to the left
                 for (j in wallri:(wallri-20)) {
-                    if (yvec[j] > 0) count = count + 1
+                    if (yvec[j] > -200) count = count + 1
                 }
+                # if more than 12 of 20 are > 0
                 if (count > 12) {
                     # find last point
                     for (j in wallri:1) {
@@ -127,8 +136,8 @@ for(f in files){
                     }
                 }
                 if (myoon) {
-                    lines(c(xvec[wallle-gab],xvec[wallle-gab]), c(1500, -1500), lty=linetype, col="red")
-                    lines(c(xvec[wallri+gab],xvec[wallri+gab]), c(1500, -1500), lty=linetype, col="red")
+                    lines(c(xvec[wallle-gab],xvec[wallle-gab]), c(1500, -1500), lty=linetype, col="green")
+                    lines(c(xvec[wallri+gab],xvec[wallri+gab]), c(1500, -1500), lty=linetype, col="green")
                 }
                 wall <- yvec[(wallle-gab):(wallri+gab)]
                 bptmp <- breakpoints(wall ~ 1, breaks=2, h=5)[[1]]
