@@ -29,10 +29,18 @@ if (opt$inputfiles!="keine") {
     files <-(unlist(strsplit(opt$inputfiles,":")))
 } else {
     files <- c("~/Kardio/ImageQuality/analysis/contour_sharpness/tables/Pat-02_Thickness_5_Addition_0_Phase_9_rec_AIDR.csv",
+               "~/Kardio/ImageQuality/analysis/contour_sharpness/tables/Pat-03_Thickness_5_Addition_0_Phase_11_rec_AIDR.csv",
+               "~/Kardio/ImageQuality/analysis/contour_sharpness/tables/Pat-04_Thickness_5_Addition_0_Phase_8_rec_AIDR.csv",
+               "~/Kardio/ImageQuality/analysis/contour_sharpness/tables/Pat-05_Thickness_5_Addition_0_Phase_10_rec_AIDR.csv",
                "~/Kardio/ImageQuality/analysis/contour_sharpness/tables/Pat-06_Thickness_5_Addition_0_Phase_13_rec_AIDR.csv",
+               "~/Kardio/ImageQuality/analysis/contour_sharpness/tables/Pat-07_Thickness_5_Addition_0_Phase_8_rec_AIDR.csv",
                "~/Kardio/ImageQuality/analysis/contour_sharpness/tables/Pat-09_Thickness_5_Addition_0_Phase_10_rec_AIDR.csv",
-               "~/Kardio/ImageQuality/analysis/contour_sharpness/tables/Pat-19_Thickness_5_Addition_0_Phase_10_rec_AIDR.csv",
-               "~/Kardio/ImageQuality/analysis/contour_sharpness/tables/Pat-30_Thickness_5_Addition_0_Phase_10_rec_AIDR.csv")
+               "~/Kardio/ImageQuality/analysis/contour_sharpness/tables/Pat-10_Thickness_5_Addition_0_Phase_8_rec_AIDR.csv",
+               "~/Kardio/ImageQuality/analysis/contour_sharpness/tables/Pat-11_Thickness_5_Addition_0_Phase_10_rec_AIDR.csv",
+               "~/Kardio/ImageQuality/analysis/contour_sharpness/tables/Pat-14_Thickness_5_Addition_0_Phase_7_rec_AIDR.csv",
+               "~/Kardio/ImageQuality/analysis/contour_sharpness/tables/Pat-15_Thickness_5_Addition_0_Phase_10_rec_AIDR.csv",
+               "~/Kardio/ImageQuality/analysis/contour_sharpness/tables/Pat-16_Thickness_5_Addition_0_Phase_9_rec_AIDR.csv",
+               "~/Kardio/ImageQuality/analysis/contour_sharpness/tables/Pat-17_Thickness_5_Addition_0_Phase_10_rec_AIDR.csv")
 #         
 #         
 #         "~/Desktop/sarah/iq/test/tables/Pat-18_Thickness_0_Addition_0_Phase_8_rec_FBP.csv",
@@ -58,6 +66,9 @@ if (opt$outputdirectory!="keine") {
     x = unlist(strsplit(files[1],"/"))
     if (length(x) > 1) outpath = paste(x[1:(length(x) -1)], collapse = "/")
 }
+
+gab3 = 50
+gab4 = 30
 
 gab = 7
 sepgab = 5
@@ -136,12 +147,12 @@ for(f in files){
                     }
                 }
                 if (myoon) {
-                    lines(c(xvec[wallle-gab],xvec[wallle-gab]), c(1500, -1500), lty=linetype, col="green")
-                    lines(c(xvec[wallri+gab],xvec[wallri+gab]), c(1500, -1500), lty=linetype, col="green")
+                    lines(c(xvec[wallle-gab3],xvec[wallle-gab3]), c(1500, -1500), lty=linetype, col="107", lwd=4)
+                    lines(c(xvec[wallri+gab4],xvec[wallri+gab4]), c(1500, -1500), lty=linetype, col="107", lwd=4)
                 }
-                wall <- yvec[(wallle-gab):(wallri+gab)]
+                wall <- yvec[(wallle-gab3):(wallri+gab4)]
                 bptmp <- breakpoints(wall ~ 1, breaks=2, h=5)[[1]]
-                wallbp = bptmp+wallle-gab
+                wallbp = bptmp+wallle-gab3
                 break
             }
         }
