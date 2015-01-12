@@ -67,6 +67,8 @@ if (opt$outputdirectory!="keine") {
     if (length(x) > 1) outpath = paste(x[1:(length(x) -1)], collapse = "/")
 }
 
+gab1 = 30
+gab2 = 50
 gab3 = 50
 gab4 = 30
 
@@ -179,12 +181,12 @@ for(f in files){
             }
         }
         if (myoon) {
-            lines(c(xvec[seple-sepgab],xvec[seple-sepgab]), c(1500, -1500), lty=linetype, col="green")
-            lines(c(xvec[sepri+sepgab],xvec[sepri+sepgab]), c(1500, -1500), lty=linetype, col="green")
+            lines(c(xvec[seple-gab1],xvec[seple-gab1]), c(1500, -1500), lty=linetype, col="107", lwd=4)
+            lines(c(xvec[sepri+gab2],xvec[sepri+gab2]), c(1500, -1500), lty=linetype, col="107", lwd=4)
         }
-        septum <- yvec[(seple-sepgab):(sepri+sepgab)]
+        septum <- yvec[(seple-gab1):(sepri+gab2)]
         bptmp <- breakpoints(septum ~ 1, breaks=2, h=5)[[1]]
-        sepbp <- bptmp+seple-gab
+        sepbp <- bptmp+seple-gab1
         
         bps <- c(sepbp,wallbp)
         cat("breakpoints=",paste(bps[1], bps[2], bps[3], bps[4], sep=":"),"\n")
