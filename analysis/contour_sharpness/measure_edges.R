@@ -106,7 +106,7 @@ for(f in files){
 
     
     if (opt$inputfiles!="keine") pdf(pdffile, width=16, height=9)
-    plot( xvec, yvec, main=f, pch=20)#, xlim = c(70,80), ylim = c(-820, 150))
+    plot( xvec, yvec, main=f, pch=20)#, xlim = c(30,35), ylim = c(472, 473))
 
     septum <- vector()  # points of septum for breakpointssearch
     seple = NA          # first point of septum from left
@@ -195,6 +195,8 @@ for(f in files){
     # 1st loop over breakpoints
     for(i in 1:nbreaks) {
         
+        exdiff = 10
+        
         bp = bps[i]
         if (bpson == 1) lines(c(xvec[bp],xvec[bp]), c(1500, -1500), lty=linetype)
         
@@ -203,32 +205,46 @@ for(f in files){
             for (j in bp:1) {
                 #upslope ?
                 a = yvec[j]
-                b = yvec[j+1]
+                b = yvec[j-1]
+                c = yvec[j-exdiff]
                 if (upslope[i] == 1) {
-                    a = yvec[j+1]
-                    b = yvec[j]
+                    if ( b > a & c >= a) {
+                        exle[i] = j
+                        lines(c(xvec[exle[i]],xvec[exle[i]]), c(1500,-1500), col="blue", lty=linetype)
+                        break    
+                    }
                 }
-                if (a < b ) {
-                    exle[i] = j+1
-                    lines(c(xvec[exle[i]],xvec[exle[i]]), c(1500,-1500), col="blue", lty=linetype)
-                    break
-                }      
+                else {
+                    # negative slope
+                    if ( b < a & c <= a) {
+                        exle[i] = j
+                        lines(c(xvec[exle[i]],xvec[exle[i]]), c(1500,-1500), col="blue", lty=linetype)
+                        break
+                    }   
+                }
             }
             
             # find local extrema right
             for (j in bp:length(xvec)) {
                 #upslope ?
                 a = yvec[j]
-                b = yvec[j-1]
-                if (upslope[i] == 1) {
-                    a = yvec[j-1]
-                    b = yvec[j]
+                b = yvec[j+1]
+                c = yvec[j+exdiff]
+                if (upslope[i] == 1){
+                    if (a > b & a>=c) {
+                        exri[i] = j
+                        lines(c(xvec[exri[i]],xvec[exri[i]]), c(1500,-1500), col="blue", lty=linetype)
+                        break
+                    }
                 }
-                if (a > b ) {
-                    exri[i] = j-1
-                    lines(c(xvec[exri[i]],xvec[exri[i]]), c(1500,-1500), col="blue", lty=linetype)
-                    break
-                }      
+                else {
+                    # negative slope
+                    if ( a < b & a <= c ) {
+                        exri[i] = j
+                        lines(c(xvec[exri[i]],xvec[exri[i]]), c(1500,-1500), col="blue", lty=linetype)
+                        break
+                    }
+                }            
             }
         }
     }
