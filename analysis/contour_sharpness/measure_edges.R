@@ -28,12 +28,27 @@ print(bps)
 if (opt$inputfiles!="keine") {
     files <-(unlist(strsplit(opt$inputfiles,":")))
 } else {
-    files <- c("~/Desktop/sarah/iq/test/tables/Pat-18_Thickness_0_Addition_0_Phase_8_rec_FBP.csv",
-               "~/Desktop/sarah/iq/test/tables/Pat-18_Thickness_0_Addition_2_Phase_9_rec_FBP.csv",
-               "~/Desktop/sarah/iq/test/tables/Pat-18_Thickness_5_Addition_0_Phase_8_rec_FBP.csv",
-               "~/Desktop/sarah/iq/test/tables/Pat-18_Thickness_5_Addition_2_Phase_8_rec_FBP.csv",
-               "~/Desktop/sarah/iq/test/tables/Pat-18_Thickness_8_Addition_0_Phase_8_rec_FBP.csv",
-               "~/Desktop/sarah/iq/test/tables/Pat-18_Thickness_8_Addition_2_Phase_8_rec_FBP.csv")
+    files <- c("~/Kardio/ImageQuality/analysis/contour_sharpness/tables/Pat-02_Thickness_5_Addition_0_Phase_9_rec_AIDR.csv",
+               "~/Kardio/ImageQuality/analysis/contour_sharpness/tables/Pat-03_Thickness_5_Addition_0_Phase_11_rec_AIDR.csv",
+               "~/Kardio/ImageQuality/analysis/contour_sharpness/tables/Pat-04_Thickness_5_Addition_0_Phase_8_rec_AIDR.csv",
+               "~/Kardio/ImageQuality/analysis/contour_sharpness/tables/Pat-05_Thickness_5_Addition_0_Phase_10_rec_AIDR.csv",
+               "~/Kardio/ImageQuality/analysis/contour_sharpness/tables/Pat-06_Thickness_5_Addition_0_Phase_13_rec_AIDR.csv",
+               "~/Kardio/ImageQuality/analysis/contour_sharpness/tables/Pat-07_Thickness_5_Addition_0_Phase_8_rec_AIDR.csv",
+               "~/Kardio/ImageQuality/analysis/contour_sharpness/tables/Pat-09_Thickness_5_Addition_0_Phase_10_rec_AIDR.csv",
+               "~/Kardio/ImageQuality/analysis/contour_sharpness/tables/Pat-10_Thickness_5_Addition_0_Phase_8_rec_AIDR.csv",
+               "~/Kardio/ImageQuality/analysis/contour_sharpness/tables/Pat-11_Thickness_5_Addition_0_Phase_10_rec_AIDR.csv",
+               "~/Kardio/ImageQuality/analysis/contour_sharpness/tables/Pat-14_Thickness_5_Addition_0_Phase_7_rec_AIDR.csv",
+               "~/Kardio/ImageQuality/analysis/contour_sharpness/tables/Pat-15_Thickness_5_Addition_0_Phase_10_rec_AIDR.csv",
+               "~/Kardio/ImageQuality/analysis/contour_sharpness/tables/Pat-16_Thickness_5_Addition_0_Phase_9_rec_AIDR.csv",
+               "~/Kardio/ImageQuality/analysis/contour_sharpness/tables/Pat-17_Thickness_5_Addition_0_Phase_10_rec_AIDR.csv")
+#         
+#         
+#         "~/Desktop/sarah/iq/test/tables/Pat-18_Thickness_0_Addition_0_Phase_8_rec_FBP.csv",
+#                "~/Desktop/sarah/iq/test/tables/Pat-18_Thickness_0_Addition_2_Phase_9_rec_FBP.csv",
+#                "~/Desktop/sarah/iq/test/tables/Pat-18_Thickness_5_Addition_0_Phase_8_rec_FBP.csv",
+#                "~/Desktop/sarah/iq/test/tables/Pat-18_Thickness_5_Addition_2_Phase_8_rec_FBP.csv",
+#                "~/Desktop/sarah/iq/test/tables/Pat-18_Thickness_8_Addition_0_Phase_8_rec_FBP.csv",
+#                "~/Desktop/sarah/iq/test/tables/Pat-18_Thickness_8_Addition_2_Phase_8_rec_FBP.csv")
 #                Steier6.csv",
 #                "~/Desktop/sarah/iq/Luedecke7.csv",
 #                "~/Desktop/sarah/iq/Eck10.csv",
@@ -52,6 +67,11 @@ if (opt$outputdirectory!="keine") {
     if (length(x) > 1) outpath = paste(x[1:(length(x) -1)], collapse = "/")
 }
 
+gab1 = 30
+gab2 = 50
+gab3 = 50
+gab4 = 30
+
 gab = 7
 sepgab = 5
 nbreaks = 4
@@ -59,9 +79,11 @@ myocutup = 130
 myocutdown = 0
 
 bpson  = 1
-myoon = 0
+myoon = 1
 exon = 1
 updown = 1
+
+linetype = 1
 
 upslope <- c(0,1,0,0)
 
@@ -84,7 +106,7 @@ for(f in files){
 
     
     if (opt$inputfiles!="keine") pdf(pdffile, width=16, height=9)
-    plot( xvec, yvec, main=f, pch=20)#, xlim = c(70,80), ylim = c(-820, 150))
+    plot( xvec, yvec, main=f, pch=20)#, xlim = c(30,35), ylim = c(472, 473))
 
     septum <- vector()  # points of septum for breakpointssearch
     seple = NA          # first point of septum from left
@@ -99,15 +121,17 @@ for(f in files){
 
     if (search_bps) {
         # find outer myocardial wall
+        # start from right end; find fist zero;
         for (i in length(xvec):1) {
             count = 0
             y = yvec[i]
-            if (y > 0) {
+            if (y > -200) {
                 wallri = i
-                # more points ?
+                # more points > 0 after first zero? check for 20 next points to the left
                 for (j in wallri:(wallri-20)) {
-                    if (yvec[j] > 0) count = count + 1
+                    if (yvec[j] > -200) count = count + 1
                 }
+                # if more than 12 of 20 are > 0
                 if (count > 12) {
                     # find last point
                     for (j in wallri:1) {
@@ -125,12 +149,12 @@ for(f in files){
                     }
                 }
                 if (myoon) {
-                    lines(c(xvec[wallle-gab],xvec[wallle-gab]), c(1500, -1500), lty=3, col="red")
-                    lines(c(xvec[wallri+gab],xvec[wallri+gab]), c(1500, -1500), lty=3, col="red")
+                    lines(c(xvec[wallle-gab3],xvec[wallle-gab3]), c(1500, -1500), lty=linetype, col="107", lwd=4)
+                    lines(c(xvec[wallri+gab4],xvec[wallri+gab4]), c(1500, -1500), lty=linetype, col="107", lwd=4)
                 }
-                wall <- yvec[(wallle-gab):(wallri+gab)]
+                wall <- yvec[(wallle-gab3):(wallri+gab4)]
                 bptmp <- breakpoints(wall ~ 1, breaks=2, h=5)[[1]]
-                wallbp = bptmp+wallle-gab
+                wallbp = bptmp+wallle-gab3
                 break
             }
         }
@@ -157,12 +181,12 @@ for(f in files){
             }
         }
         if (myoon) {
-            lines(c(xvec[seple-sepgab],xvec[seple-sepgab]), c(1500, -1500), lty=3, col="green")
-            lines(c(xvec[sepri+sepgab],xvec[sepri+sepgab]), c(1500, -1500), lty=3, col="green")
+            lines(c(xvec[seple-gab1],xvec[seple-gab1]), c(1500, -1500), lty=linetype, col="107", lwd=4)
+            lines(c(xvec[sepri+gab2],xvec[sepri+gab2]), c(1500, -1500), lty=linetype, col="107", lwd=4)
         }
-        septum <- yvec[(seple-sepgab):(sepri+sepgab)]
+        septum <- yvec[(seple-gab1):(sepri+gab2)]
         bptmp <- breakpoints(septum ~ 1, breaks=2, h=5)[[1]]
-        sepbp <- bptmp+seple-gab
+        sepbp <- bptmp+seple-gab1
         
         bps <- c(sepbp,wallbp)
         cat("breakpoints=",paste(bps[1], bps[2], bps[3], bps[4], sep=":"),"\n")
@@ -171,40 +195,56 @@ for(f in files){
     # 1st loop over breakpoints
     for(i in 1:nbreaks) {
         
+        exdiff = 10
+        
         bp = bps[i]
-        if (bpson == 1) lines(c(xvec[bp],xvec[bp]), c(1500, -1500), lty=2)
+        if (bpson == 1) lines(c(xvec[bp],xvec[bp]), c(1500, -1500), lty=linetype)
         
         if (exon){
             # find local extrema left
             for (j in bp:1) {
                 #upslope ?
                 a = yvec[j]
-                b = yvec[j+1]
+                b = yvec[j-1]
+                c = yvec[j-exdiff]
                 if (upslope[i] == 1) {
-                    a = yvec[j+1]
-                    b = yvec[j]
+                    if ( b > a & c >= a) {
+                        exle[i] = j
+                        lines(c(xvec[exle[i]],xvec[exle[i]]), c(1500,-1500), col="blue", lty=linetype)
+                        break    
+                    }
                 }
-                if (a < b ) {
-                    exle[i] = j+1
-                    lines(c(xvec[exle[i]],xvec[exle[i]]), c(1500,-1500), col="blue", lty=3)
-                    break
-                }      
+                else {
+                    # negative slope
+                    if ( b < a & c <= a) {
+                        exle[i] = j
+                        lines(c(xvec[exle[i]],xvec[exle[i]]), c(1500,-1500), col="blue", lty=linetype)
+                        break
+                    }   
+                }
             }
             
             # find local extrema right
             for (j in bp:length(xvec)) {
                 #upslope ?
                 a = yvec[j]
-                b = yvec[j-1]
-                if (upslope[i] == 1) {
-                    a = yvec[j-1]
-                    b = yvec[j]
+                b = yvec[j+1]
+                c = yvec[j+exdiff]
+                if (upslope[i] == 1){
+                    if (a > b & a>=c) {
+                        exri[i] = j
+                        lines(c(xvec[exri[i]],xvec[exri[i]]), c(1500,-1500), col="blue", lty=linetype)
+                        break
+                    }
                 }
-                if (a > b ) {
-                    exri[i] = j-1
-                    lines(c(xvec[exri[i]],xvec[exri[i]]), c(1500,-1500), col="blue", lty=3)
-                    break
-                }      
+                else {
+                    # negative slope
+                    if ( a < b & a <= c ) {
+                        exri[i] = j
+                        lines(c(xvec[exri[i]],xvec[exri[i]]), c(1500,-1500), col="blue", lty=linetype)
+                        break
+                    }
+                }            
             }
         }
     }
@@ -221,10 +261,10 @@ for(f in files){
 
             up =  downex + (upex - downex)*0.75
             down = downex + (upex - downex)*0.25
-            lines(c(xvec[exle[i]],xvec[exri[i]]), c(up, up), col="red", lty=3)
-            lines(c(xvec[exle[i]],xvec[exri[i]]), c(down, down), col="red", lty=3)
-            lines(c(xvec[exle[i]],xvec[exri[i]]), c(upex, upex), col="blue", lty=3)
-            lines(c(xvec[exle[i]],xvec[exri[i]]), c(downex, downex), col="blue", lty=3)
+            lines(c(xvec[exle[i]],xvec[exri[i]]), c(up, up), col="red", lty=linetype)
+            lines(c(xvec[exle[i]],xvec[exri[i]]), c(down, down), col="red", lty=linetype)
+            lines(c(xvec[exle[i]],xvec[exri[i]]), c(upex, upex), col="blue", lty=linetype)
+            lines(c(xvec[exle[i]],xvec[exri[i]]), c(downex, downex), col="blue", lty=linetype)
 
             # find excact x-value for 25% and 75%
             delta_le_x = xvec[exle[i]]
@@ -256,7 +296,7 @@ for(f in files){
             n = yvec[x] - m*xvec[x]                    
             delta_le_x = (down - n)/m
             
-            lines(c(delta_le_x,delta_le_x), c(1500,-1500), col="red", lty=3)
+            lines(c(delta_le_x,delta_le_x), c(1500,-1500), col="red", lty=linetype)
             
             # right
             for(k in exri[i]:exle[i]) {
@@ -283,7 +323,7 @@ for(f in files){
             
             delta = delta_ri_x - delta_le_x
             
-            lines(c(delta_ri_x,delta_ri_x), c(1500,-1500), col="red", lty=3)
+            lines(c(delta_ri_x,delta_ri_x), c(1500,-1500), col="red", lty=linetype)
 
             # something's wrong here, have to change down and up later
             # because downex = upvalue and upex = downvalue
