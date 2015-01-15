@@ -79,7 +79,7 @@ myocutup = 130
 myocutdown = 0
 
 bpson  = 1
-myoon = 1
+myoon = 0
 exon = 1
 updown = 1
 
@@ -239,7 +239,8 @@ for(f in files){
                 }
                 else {
                     # negative slope
-                    if ( a < b & a <= c ) {
+                    # exception for minimum of edge 4: if no minimum is found, take the last point
+                    if ( (a < b & a <= c) | (i == 4 & j == ( length(xvec) - exdiff ) ) )  {
                         exri[i] = j
                         lines(c(xvec[exri[i]],xvec[exri[i]]), c(1500,-1500), col="blue", lty=linetype)
                         break
