@@ -194,7 +194,7 @@ for(f in files){
     
     # 1st loop over breakpoints
     for(i in 1:nbreaks) {
-        
+ 
         exdiff = 10
         
         bp = bps[i]
@@ -216,7 +216,8 @@ for(f in files){
                 }
                 else {
                     # negative slope
-                    if ( b < a & c <= a) {
+                    # exception for maximum of edge 1: if no maximum is found, take the first + diff point
+                    if ( (b < a & c <= a) | (i == 1 & j == 1 + exdiff) ) {
                         exle[i] = j
                         lines(c(xvec[exle[i]],xvec[exle[i]]), c(1500,-1500), col="blue", lty=linetype)
                         break
@@ -239,7 +240,7 @@ for(f in files){
                 }
                 else {
                     # negative slope
-                    # exception for minimum of edge 4: if no minimum is found, take the last point
+                    # exception for minimum of edge 4: if no minimum is found, take the last point - diff
                     if ( (a < b & a <= c) | (i == 4 & j == ( length(xvec) - exdiff ) ) )  {
                         exri[i] = j
                         lines(c(xvec[exri[i]],xvec[exri[i]]), c(1500,-1500), col="blue", lty=linetype)
