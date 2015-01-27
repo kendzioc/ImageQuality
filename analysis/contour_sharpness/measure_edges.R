@@ -195,6 +195,7 @@ for(f in files){
     # 1st loop over breakpoints
     for(i in 1:nbreaks) {
  
+        # check that it's a real extrema and not noise, by checking exdiff points later
         exdiff = 10
         
         bp = bps[i]
