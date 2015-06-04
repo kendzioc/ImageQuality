@@ -1,5 +1,7 @@
-sheet <- read.csv(file="~/charite/ImageQuality/analysis/contour_sharpness/results/out_clean.csv", sep=",", head=TRUE,na.strings = "")
+sheet <- read.csv(file="~/charite/ImageQuality/analysis/contour_sharpness/results/out_test.csv", sep=",", head=TRUE,na.strings = "")
 outcsv="~/charite/ImageQuality/analysis/contour_sharpness/results/results.csv"
+pv_d_csv="~/charite/ImageQuality/analysis/contour_sharpness/results/pvalues_d.csv"
+pv_m_csv="~/charite/ImageQuality/analysis/contour_sharpness/results/pvalues_m.csv"
 savepdf=TRUE
 
 # fill delta vectors
@@ -765,23 +767,107 @@ make_m_plot <- function(edge_num, thick, vec_a_means, vec_f_means, vec_a_sds, ve
   if (savepdf==TRUE) dev.off()
 }
 
-write(print("type,edge_num,rec,thick,add,num_of_elements,mean,sd"), outcsv)
-rec=c("a", "f")
-thick=c(0,5,8)
-add=c(0,1,2,3,5,7)
-for (e in 1:4){
-  for (r in rec){
-    for (t in thick) {
-      for (a in add){
-        vecname_d = paste("d",e,"_",r,"_t",t,"_a",a, sep="")
-        vecname_m = paste("m",e,"_",r,"_t",t,"_a",a, sep="")
-        write(print(paste("d", e, r, t, a, length( get(vecname_d)), mean(get(vecname_d)), sd(get(vecname_d)), sep=",")), outcsv, append=TRUE)
-        write(print(paste("m", e, r, t, a, length( get(vecname_m)), mean(get(vecname_m)), sd(get(vecname_m)), sep=",")), outcsv, append=TRUE)
+# write means and sd valuse to csv
+{
+  write(print("type,edge_num,rec,thick,add,num_of_elements,mean,sd"), outcsv)
+  val=c("d", "m")
+  rec=c("a", "f")
+  thick=c(0,5,8)
+  add=c(0,1,2,3,5,7)
+  for (v in val){
+    for (e in 1:4){
+      for (r in rec){
+        for (t in thick) {
+          for (a in add){
+            vecname = paste(v,e,"_",r,"_t",t,"_a",a, sep="")
+            write(print(paste(v, e, r, t, a, length( get(vecname)), mean(get(vecname)), sd(get(vecname)), sep=",")), outcsv, append=TRUE)
+          }
+        }
       }
     }
   }
 }
 
+# function for creating cross table for p-values
+write_pvalues <- function(value, outfile){
+  # create header lines
+  {
+    line_v <- character()
+    line_e <- character()
+    line_r <- character()
+    line_t <- character()
+    line_a <- character()
+    
+    val=value
+    for (v in val){# x2
+      for (e in 1:4){# x4
+        for (r in rec){ # x2
+          for (t in thick) { # x3
+            for (a in add){ # x6
+              tmp = line_v
+              line_v = paste(tmp,v,sep=",")
+              tmp = line_e
+              line_e = paste(tmp,e,sep=",")
+              tmp = line_r
+              line_r = paste(tmp,r,sep=",")
+              tmp = line_t
+              line_t = paste(tmp,t,sep=",")
+              tmp = line_a
+              line_a = paste(tmp,a,sep=",")
+            }
+          }
+        }
+      }
+    }
+    write(print(paste(",,,,",line_v,sep="")), outfile, append=FALSE)
+    write(print(paste(",,,,",line_e,sep="")), outfile, append=TRUE)
+    write(print(paste(",,,,",line_r,sep="")), outfile, append=TRUE)
+    write(print(paste(",,,,",line_t,sep="")), outfile, append=TRUE)
+    write(print(paste(",,,,",line_a,sep="")), outfile, append=TRUE)
+  } 
+  
+  # fill p-values
+  {
+    # loop over rows in table
+    for (v in val){
+      for (e in 1:4){
+        for (r in rec){
+          for (t in thick) {
+            for (a in add){
+              vecname = paste(v,e,"_",r,"_t",t,"_a",a, sep="")
+              line = paste(v,e,r,t,a, sep=",")
+              
+              # loop over columns in table
+              for (v2 in val){
+                for (e2 in 1:4){
+                  for (r2 in rec){
+                    for (t2 in thick) {
+                      for (a2 in add){
+                        vecname_2 = paste(v2,e2,"_",r2,"_t",t2,"_a",a2, sep="")
+                        # paired t.test for same edge
+                        if (e == e2) tst <- t.test(get(vecname), get(vecname_2), paired=TRUE)
+                        else tst <- t.test(get(vecname), get(vecname_2), paired=FALSE)
+                        tmp = line
+                        line = paste(line,tst$p.value,sep=",")
+                        
+                      }
+                    }
+                  }
+                }
+              }
+              write(print(line), outfile, append=TRUE)
+              
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+# create p values
+write_pvalues(c("d"), pv_d_csv)
+write_pvalues(c("m"), pv_m_csv)
 
 
 # backup
