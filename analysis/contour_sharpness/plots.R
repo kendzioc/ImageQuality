@@ -1,4 +1,4 @@
-sheet <- read.csv(file="~/charite/ImageQuality/analysis/contour_sharpness/results/out_test.csv", sep=",", head=TRUE,na.strings = "")
+sheet <- read.csv(file="~/charite/ImageQuality/analysis/contour_sharpness/results/out_clean.csv", sep=",", head=TRUE,na.strings = "")
 outcsv="~/charite/ImageQuality/analysis/contour_sharpness/results/results.csv"
 pv_d_csv="~/charite/ImageQuality/analysis/contour_sharpness/results/pvalues_d.csv"
 pv_m_csv="~/charite/ImageQuality/analysis/contour_sharpness/results/pvalues_m.csv"
